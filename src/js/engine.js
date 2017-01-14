@@ -38,16 +38,19 @@ function init(){
 
     let geometry = new THREE.BoxGeometry( 1, 1, 1 ),
         material = new THREE.MeshBasicMaterial({color: '#7a1ce3'}),
-        cube = new THREE.Mesh(geometry, material);
+        cube = new THREE.Mesh(geometry, material),
+        cube2 = new THREE.Mesh(geometry, material);
 
-    scene.add(cube);
+    scene.add(cube, cube2);
     camera.position.z = 5;
 
     var render = function () {
         requestAnimationFrame( render );
 
-        cube.rotation.x += 0.1;
-        cube.rotation.y += 0.1;
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+        cube2.rotation.y -= 0.01;
+        cube2.rotation.y -= 0.01;
 
         renderer.render(scene, camera);
     };
