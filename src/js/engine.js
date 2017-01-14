@@ -2,6 +2,7 @@
 //Libraries
 import $ from 'jquery';
 import jQuery from 'jquery';
+import * as THREE from 'three';
 
 //CoreObjects
 import Canvas from './coreObjects/Canvas';
@@ -10,9 +11,10 @@ import Canvas from './coreObjects/Canvas';
 
 /** Set global scope variables */
 //Core variables
-let canvas,
-    engine,
-    fps = 30;
+let renderer,
+    scene,
+    camera,
+    fps = 60;
 
 //GameObjects variables
 let gameObjects;
@@ -27,9 +29,16 @@ $(init);
  */
 function init(){
     //Init canvas
-    canvas = new Canvas();
-    canvas.$el.appendTo('main');
-    engine = canvas.$el.get(0).getContext('2d');
+    //canvas = new Canvas();
+    //canvas.$el.appendTo('main');
+
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    document.body.appendChild(renderer.domElement);
 
     //Init gameObjects
 
@@ -51,7 +60,6 @@ function update(){
  * Draw gameObjects
  */
 function draw(){
-    engine.clearRect(0, 0, canvas.width, canvas.height);
-    engine.font = "30px Arial";
-    engine.fillText('Mooie snor', 100, 100);
+    "use strict";
+    renderer.render(scene, camera);
 }

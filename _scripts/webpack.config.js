@@ -21,7 +21,8 @@ module.exports = {
             {
                 test: /\.js$/,
                 include: [
-                    path.join(projectPath, 'src/js')
+                    path.join(projectPath, 'src/js'),
+                    path.join('node_modules/three')
                 ],
                 loader: 'babel-loader',
                 query: {
