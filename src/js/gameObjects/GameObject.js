@@ -1,3 +1,6 @@
+/**
+ * Base for all objects in the game
+ */
 class GameObject{
     //Fields
     x = 0;
@@ -15,5 +18,19 @@ class GameObject{
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    /**
+     * Update function, for all logic
+     */
+    update(){
+
+    }
+
+    /**
+     * Draw function, for rendering
+     */
+    draw(){
+
     }
 }
