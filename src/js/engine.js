@@ -5,7 +5,6 @@ import jQuery from 'jquery';
 import * as THREE from 'three';
 
 //CoreObjects
-import Canvas from './coreObjects/Canvas';
 
 //GameObjects
 
@@ -28,25 +27,31 @@ $(init);
  *
  */
 function init(){
-    //Init canvas
-    //canvas = new Canvas();
-    //canvas.$el.appendTo('main');
-
+    //Init ThreeJS todo put in Canvas class
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
 
+    //Append canvas element to body
     document.body.appendChild(renderer.domElement);
 
-    //Init gameObjects
+    let geometry = new THREE.BoxGeometry( 1, 1, 1 ),
+        material = new THREE.MeshBasicMaterial({color: '#7a1ce3'}),
+        cube = new THREE.Mesh(geometry, material);
 
-    //Init game loop
-    setInterval(function() {
-        update();
-        draw();
-    }, 1000/fps);
+    scene.add(cube);
+
+    var render = function () {
+        requestAnimationFrame( render );
+
+        cube.rotation.x += 0.1;
+        cube.rotation.y += 0.1;
+
+        renderer.render(scene, camera);
+    };
+
+    render();
 }
 
 /**
