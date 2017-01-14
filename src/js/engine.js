@@ -5,6 +5,7 @@ import jQuery from 'jquery';
 import * as THREE from 'three';
 
 //CoreObjects
+import Map from './coreObjects/Map';
 
 //GameObjects
 
@@ -13,7 +14,7 @@ import * as THREE from 'three';
 let renderer,
     scene,
     camera,
-    fps = 60;
+    map;
 
 //GameObjects variables
 let gameObjects;
@@ -29,39 +30,44 @@ $(init);
 function init(){
     //Init ThreeJS todo put in Canvas class
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
 
     //Append canvas element to body
     document.body.appendChild(renderer.domElement);
 
-    let geometry = new THREE.BoxGeometry( 1, 1, 1 ),
-        material = new THREE.MeshBasicMaterial({color: '#7a1ce3'}),
-        cube = new THREE.Mesh(geometry, material),
-        cube2 = new THREE.Mesh(geometry, material);
-
-    scene.add(cube, cube2);
+    //Set camera position
     camera.position.z = 5;
 
-    var render = function () {
-        requestAnimationFrame( render );
+    //Init map
+    map = new Map();
 
-        cube.rotation.x += 0.01;
-        cube.rotation.y += 0.01;
-        cube2.rotation.y -= 0.01;
-        cube2.rotation.y -= 0.01;
+    //Append all tiles from map to scene
+    map.tiles.forEach(function(tile){
+        "use strict";
 
-        renderer.render(scene, camera);
-    };
+        scene.add(tile.mesh);
+    });
 
     render();
+}
+
+
+function render(){
+    "use strict";
+    requestAnimationFrame(draw);
+
+    update();
+
+    draw();
 }
 
 /**
  * Update gameObjects
  */
 function update(){
+    "use strict";
 
 }
 
@@ -70,5 +76,6 @@ function update(){
  */
 function draw(){
     "use strict";
+
     renderer.render(scene, camera);
 }

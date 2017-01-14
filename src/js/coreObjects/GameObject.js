@@ -2,9 +2,6 @@
  * Base for all objects in the game
  */
 class GameObject{
-    //Fields
-    mesh = null;
-
     /**
      * Constructor
      *
