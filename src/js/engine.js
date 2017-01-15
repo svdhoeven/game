@@ -43,7 +43,7 @@ function init(){
     camera.position.z = 5;
 
     //Init map
-    map = new Map();
+    map = new Map(16, 16);
     raycaster = new THREE.Raycaster();
     mouse = THREE.Vector2(0, 0);
     //document.addEventListener( 'mousemove', onMouseMove.bind(this), false );
