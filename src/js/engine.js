@@ -52,7 +52,7 @@ function init(){
     map = new Map(1, 1);
 
     raycaster = new THREE.Raycaster();
-    mouse = {position: new THREE.Vector2(), state: [], previousState: []};
+    mouse = {position: new THREE.Vector2(), state: [false], previousState: [false]};
     document.addEventListener( 'mousemove', onMouseMove, false );
     document.addEventListener( 'mousedown', onMouseDown, false );
     document.addEventListener( 'mouseup', onMouseUp, false );
@@ -171,6 +171,25 @@ function update(elapsedTimeMs){
             selectedGameObject = null;
         }
     }
+
+    // Compare the current mouse state against the previous to determine mouse events
+    for(let i = 0; i < mouse.state.length; i++) {
+        if (mouse.state[i] != mouse.previousState[i]) {
+            if (mouse.state[i]) {
+                // Mouse button i pressed
+                if (selectedGameObject != null) {
+                    selectedGameObject.onMouseDown();
+                }
+            } else {
+                // Mouse button i released
+                if (selectedGameObject != null) {
+                    selectedGameObject.onMouseUp();
+                }
+            }
+        }
+    }
+
+    mouse.previousState = mouse.state.slice(0);
 }
 
 /**
