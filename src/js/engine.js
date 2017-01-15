@@ -21,7 +21,8 @@ let loop,
     raycaster;
 
 //GameObjects variables
-let gameObjects;
+let gameObjects = [];
+let selectedGameObject = null;
 
 
 //Call init when done loading (jQuery magic)
@@ -48,18 +49,21 @@ function init(){
     camera.position.z = 5;
 
     //Init map
-    map = new Map(16, 16);
+    map = new Map(1, 1);
 
     raycaster = new THREE.Raycaster();
-    mouse = THREE.Vector2();
-    //document.addEventListener( 'mousemove', onMouseMove, false );
-    //window.addEventListener( 'resize', onWindowResize, false );
+    mouse = {position: new THREE.Vector2(), state: [], previousState: []};
+    document.addEventListener( 'mousemove', onMouseMove, false );
+    document.addEventListener( 'mousedown', onMouseDown, false );
+    document.addEventListener( 'mouseup', onMouseUp, false );
+    window.addEventListener( 'resize', onWindowResize, false );
 
     //Append all tiles from map to scene
     map.tiles.forEach(function(tile){
         "use strict";
 
         scene.add(tile.mesh);
+        gameObjects.push(tile);
     });
 
     render();
@@ -77,19 +81,44 @@ function render(){
     draw();
     let ts2 = Date.now();
 
-    console.log("Loop: " + loop++ + " Update time: " + (ts1 - ts0) + "ms , Draw time: " + (ts2 - ts1) + "ms");
+    //console.debug("Loop: " + loop++ + " Update time: " + (ts1 - ts0) + "ms , Draw time: " + (ts2 - ts1) + "ms");
 }
 
 /**
- * Handle mouse events
+ * Handle mouse move events
  * @param event
  */
 function onMouseMove(event) {
     "use strict";
     event.preventDefault();
-    mouse = new THREE.Vector2(
+
+    mouse.position = new THREE.Vector2(
         (event.clientX / window.innerWidth) * 2 - 1,
         - (event.clientY / window.innerHeight) * 2 + 1);
+    //console.debug("Moved mouse to X: " + mouse.position.x + " Y: " + mouse.position.y);
+}
+
+/**
+ * Handle mouse down events
+ * @param event
+ */
+function onMouseDown(event) {
+    "use strict";
+    event.preventDefault();
+
+    mouse.state[event.button] = true;
+    console.debug("Mouse button " + event.button + " pressed" );
+}
+
+/**
+ * Handle mouse up events
+ * @param event
+ */
+function onMouseUp(event) {
+    "use strict";
+    event.preventDefault();
+    mouse.state[event.button] = false;
+    console.debug("Mouse button " + event.button + " released" );
 }
 
 /**
@@ -100,6 +129,7 @@ function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    console.debug("Resized window Width: " + window.innerWidth + " Height: " + window.innerHeight);
 }
 
 /**
@@ -109,14 +139,38 @@ function update(elapsedTimeMs){
     "use strict";
 
     // update the picking ray with the camera and mouse position
-    //raycaster.setFromCamera(mouse, camera);
+    raycaster.setFromCamera(mouse.position, camera);
 
-    // calculate objects intersecting the picking ray
-    // var intersects = raycaster.intersectObjects(scene.children);
-    //
-    // for (let i = 0; i < intersects.length; i++) {
-    //     intersects[i].object.material.color.set( 0xff0000 );
-    // }
+    //calculate objects intersecting the picking ray
+    var intersects = raycaster.intersectObjects(scene.children);
+
+    // Matches objects based on mesh UUID
+    if (intersects.length > 0) {
+        intersects.forEach(function(intersect) {
+           gameObjects.forEach(function(gameObject) {
+               if (gameObject.mesh.uuid == intersect.object.uuid) {
+                   if (selectedGameObject == null) {
+                       // Mouse cursor moved to an object
+                       gameObject.onMouseHoverStart();
+                   } else if (selectedGameObject.mesh.uuid != gameObject.mesh.uuid) {
+                       // Mouse cursor moved to a different object
+                        selectedGameObject.onMouseHoverEnd();
+                        gameObject.onMouseHoverStart();
+                   } else {
+                       // Mouse cursor points at the same object
+                   }
+
+                   selectedGameObject = gameObject;
+               }
+           });
+        });
+    } else {
+        if (selectedGameObject != null) {
+            // Mouse cursor moved from an object to empty space
+            selectedGameObject.onMouseHoverEnd();
+            selectedGameObject = null;
+        }
+    }
 }
 
 /**

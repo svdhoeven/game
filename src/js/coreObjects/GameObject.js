@@ -15,6 +15,14 @@ class GameObject{
      * Update function, for all logic
      */
     update(){}
+
+    /**
+     * Event handler functions
+     */
+    onMouseHoverStart(){}
+    onMouseHoverEnd(){}
+    onMouseDown(){}
+    onMouseUp(){}
 }
 
 export default GameObject;

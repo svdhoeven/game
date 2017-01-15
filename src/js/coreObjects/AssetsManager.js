@@ -18,6 +18,10 @@ class AssetsManager{
             field_flat: new THREE.Mesh(this.geometries.cube, this.materials.grass)
         }
     }
+
+    createTile() {
+        return new THREE.Mesh(this.geometries.cube.clone(), this.materials.grass.clone());
+    }
 }
 
 export default AssetsManager;
