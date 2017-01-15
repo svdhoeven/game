@@ -11,12 +11,14 @@ import Map from './coreObjects/Map';
 
 /** Set global scope variables */
 //Core variables
-let renderer,
+let loop,
+    lastUpdateTs,
+    renderer,
     scene,
     camera,
     map,
-    raycaster,
-    mouse;
+    mouse,
+    raycaster;
 
 //GameObjects variables
 let gameObjects;
@@ -30,6 +32,9 @@ $(init);
  *
  */
 function init(){
+    loop = 0;
+    lastUpdateTs = Date.now();
+
     //Init ThreeJS todo put in Canvas class
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -44,9 +49,10 @@ function init(){
 
     //Init map
     map = new Map(16, 16);
+
     raycaster = new THREE.Raycaster();
-    mouse = THREE.Vector2(0, 0);
-    //document.addEventListener( 'mousemove', onMouseMove.bind(this), false );
+    mouse = THREE.Vector2();
+    //document.addEventListener( 'mousemove', onMouseMove, false );
     //window.addEventListener( 'resize', onWindowResize, false );
 
     //Append all tiles from map to scene
@@ -62,11 +68,16 @@ function init(){
 
 function render(){
     "use strict";
-    requestAnimationFrame(draw);
+    requestAnimationFrame(render);
 
-    update();
-
+    let ts0 = Date.now();
+    update(ts0 - lastUpdateTs);
+    lastUpdateTs = ts0;
+    let ts1 = Date.now();
     draw();
+    let ts2 = Date.now();
+
+    console.log("Loop: " + loop++ + " Update time: " + (ts1 - ts0) + "ms , Draw time: " + (ts2 - ts1) + "ms");
 }
 
 /**
@@ -76,8 +87,9 @@ function render(){
 function onMouseMove(event) {
     "use strict";
     event.preventDefault();
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+    mouse = new THREE.Vector2(
+        (event.clientX / window.innerWidth) * 2 - 1,
+        - (event.clientY / window.innerHeight) * 2 + 1);
 }
 
 /**
@@ -93,9 +105,18 @@ function onWindowResize() {
 /**
  * Update gameObjects
  */
-function update(){
+function update(elapsedTimeMs){
     "use strict";
 
+    // update the picking ray with the camera and mouse position
+    //raycaster.setFromCamera(mouse, camera);
+
+    // calculate objects intersecting the picking ray
+    // var intersects = raycaster.intersectObjects(scene.children);
+    //
+    // for (let i = 0; i < intersects.length; i++) {
+    //     intersects[i].object.material.color.set( 0xff0000 );
+    // }
 }
 
 /**
