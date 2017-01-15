@@ -10,7 +10,8 @@ class AssetsManager{
         };
 
         this.materials = {
-            grass: new THREE.MeshBasicMaterial({color: 'green'})
+            grass: new THREE.MeshBasicMaterial({color: 'green'}),
+            dirt: new THREE.MeshBasicMaterial({color: 'brown'})
         };
 
         this.meshes = {

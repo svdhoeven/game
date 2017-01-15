@@ -14,7 +14,9 @@ import Map from './coreObjects/Map';
 let renderer,
     scene,
     camera,
-    map;
+    map,
+    raycaster,
+    mouse;
 
 //GameObjects variables
 let gameObjects;
@@ -42,6 +44,10 @@ function init(){
 
     //Init map
     map = new Map();
+    raycaster = new THREE.Raycaster();
+    mouse = THREE.Vector2(0, 0);
+    //document.addEventListener( 'mousemove', onMouseMove.bind(this), false );
+    //window.addEventListener( 'resize', onWindowResize, false );
 
     //Append all tiles from map to scene
     map.tiles.forEach(function(tile){
@@ -61,6 +67,27 @@ function render(){
     update();
 
     draw();
+}
+
+/**
+ * Handle mouse events
+ * @param event
+ */
+function onMouseMove(event) {
+    "use strict";
+    event.preventDefault();
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+}
+
+/**
+ * Resizes the window
+ */
+function onWindowResize() {
+    "use strict";
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 /**
