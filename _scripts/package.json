@@ -12,13 +12,12 @@
     "webpack": "^1.13.2"
   },
   "devDependencies": {
+    "dat.gui": "^0.6.1",
+    "eventbusjs": "^0.1.0",
     "jquery": "^3.1.1",
     "three": "^0.83.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1aadad",
-    "babel:build": "babel src/js --out-file app/bundle.js",
-    "babel watch": "babel src/js --watch --out-file app/bundle.js",
     "webpack": "webpack",
     "wp watch": "webpack --watch"
   },

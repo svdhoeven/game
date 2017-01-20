@@ -4,7 +4,7 @@ var webpack = require('webpack'),
 var projectPath = path.resolve(__dirname, '..');
 
 module.exports = {
-    entry: projectPath + '/src/js/engine.js',
+    entry: projectPath + '/src/js/main.js',
     output: {
         path: projectPath + '/app/bundles',
         filename: 'game.js'
@@ -19,10 +19,11 @@ module.exports = {
     module : {
         loaders: [
             {
-                test: /\.js$/,
+                test: /\.jsx?$/,
                 include: [
                     path.join(projectPath, 'src/js'),
-                    path.join('node_modules/three')
+                    path.join('node_modules/three'),
+                    path.join('node_modules/dat.gui'),
                 ],
                 loader: 'babel-loader',
                 query: {
