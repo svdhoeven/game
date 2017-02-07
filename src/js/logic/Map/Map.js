@@ -21,6 +21,10 @@ class Map {
         entity.mesh.position.setY(tile.mesh.position.y);
         entity.mesh.position.setZ(tile.mesh.position.z);
     }
+
+    clear(tile) {
+        tile.building = null;
+    }
 }
 
 export default Map;

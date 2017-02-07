@@ -28,9 +28,10 @@ function init(){
 
 function loop(){
     "use strict";
-    requestAnimationFrame(loop);
 
     engine.update();
     engine.draw();
     engine.statistics();
+
+    requestAnimationFrame(loop);
 }

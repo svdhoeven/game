@@ -1,5 +1,4 @@
-import EventBus from 'eventbusjs';
-
+import MessageBus from '../../engine/MessageBus';
 import * as Three from 'three';
 
 import Player from './Player.js'
@@ -12,10 +11,9 @@ class PlayerLogic {
         this.player = new Player();
     }
 
-    onEvent(event) {
-
-        if (event.target instanceof Event.KeyDownEvent) {
-            switch(event.target.key) {
+    onMessage(message) {
+        if (message instanceof Event.KeyDownEvent) {
+            switch(message.key) {
                 case "w":
                     this.player.velocity.y = this.player.velocity.y + 1;
                     break;
@@ -29,8 +27,8 @@ class PlayerLogic {
                     this.player.velocity.x = this.player.velocity.x + 1;
                     break;
             }
-        } else if (event.target instanceof Event.KeyUpEvent) {
-            switch (event.target.key) {
+        } else if (message instanceof Event.KeyUpEvent) {
+            switch (message.key) {
                 case "w":
                     this.player.velocity.y = this.player.velocity.y - 1;
                     break;
@@ -44,23 +42,24 @@ class PlayerLogic {
                     this.player.velocity.x = this.player.velocity.x - 1;
                     break;
             }
-        } else if (event.target instanceof Event.MouseWheelEvent) {
-            this.player.position.z = this.player.position.z + event.target.movement.y;
-        } else if (event.target instanceof Event.ClickedOnEntityEvent) {
+        } else if (message instanceof Event.MouseWheelEvent) {
+            this.player.position.z = this.player.position.z + message.movement.y;
+        } else if (message instanceof Event.ClickedOnEntityEvent) {
             switch(this.player.action) {
                 case PlayerAction.NONE:
                     break;
                 case PlayerAction.SELECT:
-                    EventBus.dispatch("bus", new Event.PlayerSelectEvent(event.target.entity));
+                    MessageBus.send("bus", new Event.PlayerSelectEvent(message.entity));
                     break;
                 case PlayerAction.PLACE:
+                    MessageBus.send("bus", new Event.PlayerPlaceEvent(message.entity));
                     break;
             }
         }
 
-        if (event.target instanceof Event.SystemUpdateEvent) {
+        if (message instanceof Event.SystemUpdateEvent) {
             this.player.position.add(this.player.velocity);
-            EventBus.dispatch("bus", new Event.CameraMoveEvent(this.player.position));
+            MessageBus.send("bus", new Event.CameraMoveEvent(this.player.position));
         }
     }
 }

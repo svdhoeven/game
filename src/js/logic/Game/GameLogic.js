@@ -1,4 +1,4 @@
-import EventBus from 'eventbusjs';
+import MessageBus from '../../engine/MessageBus';
 
 import Game from './Game'
 import Tile from '../../gameObjects/Tile';
@@ -14,32 +14,33 @@ class GameLogic {
 
     newGame(seed) {
         this.game = new Game(this.mapFactory.generateMap(seed));
-        EventBus.dispatch("bus", new Event.AddSceneEvent(this.game.map.tiles));
+        MessageBus.send("bus", new Event.AddSceneEvent(this.game.map.tiles));
     }
 
-    onEvent(event) {
-        if (event.target instanceof Event.SystemStartEvent) {
+    onMessage(message) {
+        if (message instanceof Event.SystemStartEvent) {
             let seed = Math.random();
             this.newGame(seed);
-            EventBus.dispatch("bus", new Event.NewGameEvent());
+            MessageBus.send("bus", new Event.NewGameEvent());
         }
 
-        if (event.target instanceof Event.HoveredOverEntityStartEvent) {
-            event.target.entity.highlight(true);
-        } else if (event.target instanceof Event.HoveredOverEntityStopEvent) {
-            event.target.entity.highlight(false);
+        if (message instanceof Event.HoveredOverEntityStartEvent) {
+            message.entity.highlight(true);
+        } else if (message instanceof Event.HoveredOverEntityStopEvent) {
+            message.entity.highlight(false);
         }
 
-        if (event.target instanceof Event.ClickedOnEntityEvent) {
-            if (event.target.entity instanceof Tile) {
-                if (!event.target.entity.building) {
-                    event.target.entity.select(true);
+        if (message instanceof Event.ClickedOnEntityEvent) {
+            if (message.entity instanceof Tile) {
+                let tile = message.entity;
+                if (!tile.building) {
+                    tile.select(true);
                     let building = new Building(new Three.Mesh(new Three.BoxGeometry(1, 1, 2), new Three.MeshBasicMaterial({color: 'blue'})));
-                    this.game.map.place(event.target.entity, building);
-                    EventBus.dispatch("bus", new Event.AddSceneEvent([building]));
+                    this.game.map.place(tile, building);
+                    MessageBus.send("bus", new Event.AddSceneEvent([building]));
                 } else {
-                    EventBus.dispatch("bus", new Event.RemoveSceneEvent([event.target.entity.building]));
-                    event.target.entity.building = null;
+                    MessageBus.send("bus", new Event.RemoveSceneEvent([tile.building]));
+                    this.game.map.clear(tile);
                 }
             }
         }

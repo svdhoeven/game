@@ -134,7 +134,11 @@ class PlayerSelectEvent extends PlayerEvent {
 
 }
 
-export {PlayerEvent, PlayerMoveEvent, PlayerSelectEvent}
+class PlayerPlaceEvent extends PlayerEvent {
+
+}
+
+export {PlayerEvent, PlayerMoveEvent, PlayerSelectEvent, PlayerPlaceEvent}
 
 /**
  * Window events

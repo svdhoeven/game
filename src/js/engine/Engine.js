@@ -1,4 +1,5 @@
 import EventBus from 'eventbusjs';
+import MessageBus from './MessageBus';
 
 import Input from './components/Input.js';
 import Render from './components/Render.js';
@@ -19,32 +20,32 @@ class Engine {
         this.input = new Input();
         this.render = new Render();
 
-        this.ignoreEvents = [Event.SystemUpdateEvent, Event.SystemRenderEvent, Event.CameraEvent];
+        this.ignoreMessages = [];//[Event.SystemUpdateEvent, Event.SystemRenderEvent, Event.CameraEvent];
 
-        EventBus.addEventListener("bus", this.input.onEvent, this.input);
-        EventBus.addEventListener("bus", this.render.onEvent, this.render);
+        MessageBus.subscribe("bus", this.input.onMessage, this.input);
+        MessageBus.subscribe("bus", this.render.onMessage, this.render);
 
-        EventBus.addEventListener("bus", this.log, this);
+        MessageBus.subscribe("bus", this.log, this);
     }
 
     start() {
-        EventBus.dispatch("bus", new Event.SystemStartEvent());
+        MessageBus.send("bus", new Event.SystemStartEvent());
     }
 
     stop() {
-        EventBus.dispatch("bus", new Event.SystemStopEvent());
+        MessageBus.send("bus", new Event.SystemStopEvent());
     }
 
     update() {
         let now = Date.now();
-        EventBus.dispatch("bus", new Event.SystemUpdateEvent(now - this.lastUpdateTs));
+        MessageBus.send("bus", new Event.SystemUpdateEvent(now - this.lastUpdateTs));
         this.updateDuration.push(Date.now() - now);
         this.lastUpdateTs = now;
     }
 
     draw() {
         let now = Date.now();
-        EventBus.dispatch("bus", new Event.SystemRenderEvent());
+        MessageBus.send("bus", new Event.SystemRenderEvent());
         this.renderDuration.push(Date.now() - now);
         this.lastRenderTs = now;
     }
@@ -58,23 +59,23 @@ class Engine {
             let averageUpdateTimeMs = this.updateDuration.reduce(function(a, b) {
                     return a + b;
                 }, 0) / this.updateDuration.length;
-            EventBus.dispatch("bus", new Event.SystemStatisticsEvent(10000, averageRenderTimeMs, averageUpdateTimeMs));
+            MessageBus.send("bus", new Event.SystemStatisticsEvent(10000, averageRenderTimeMs, averageUpdateTimeMs));
             this.renderDuration = [];
             this.updateDuration = [];
             this.lastStatisticsTs = now;
         }
     }
 
-    log(event) {
+    log(message) {
         let log = true;
-        this.ignoreEvents.forEach(function(type) {
-            if (event.target instanceof type) {
+        this.ignoreMessages.forEach(function(type) {
+            if (message instanceof type) {
                 log = false;
             }
         }, this);
 
         if (log) {
-            console.debug("Name: " + event.target.constructor.name + ", Event: " + JSON.stringify(event.target));
+            console.debug("Name: " + message.constructor.name + ", Event: " + JSON.stringify(message));
         }
     }
 }

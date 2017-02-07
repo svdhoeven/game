@@ -1,6 +1,6 @@
-import EventBus from 'eventbusjs';
+import MessageBus from '../MessageBus';
 import * as Three from 'three';
-import * as Event from '../../events/Event.js'
+import * as Event from '../../events/Event.js';
 
 class Input {
     /**
@@ -24,36 +24,35 @@ class Input {
 
     /**
      * Handle system messages
-     * @param event
+     * @param message
      */
-    onEvent(message) {
-        let event = message.target;
-        if (event instanceof Event.InputEvent) {
-            if (event instanceof Event.MouseIntersectStartEvent) {
-                this.intersectEntities.push(event.entity);
-                EventBus.dispatch("bus", new Event.HoveredOverEntityStartEvent(event.entity));
-            } else if (event instanceof Event.MouseIntersectStopEvent) {
+    onMessage(message) {
+        if (message instanceof Event.InputEvent) {
+            if (message instanceof Event.MouseIntersectStartEvent) {
+                this.intersectEntities.push(message.entity);
+                MessageBus.send("bus", new Event.HoveredOverEntityStartEvent(message.entity));
+            } else if (message instanceof Event.MouseIntersectStopEvent) {
                 this.intersectEntities = this.intersectEntities.filter(function(entity) {
-                   return entity != event.entity;
+                   return entity != message.entity;
                 });
-                EventBus.dispatch("bus", new Event.HoveredOverEntityStopEvent(event.entity));
-            } else if (event instanceof Event.MouseButtonPressedEvent) {
+                MessageBus.send("bus", new Event.HoveredOverEntityStopEvent(message.entity));
+            } else if (message instanceof Event.MouseButtonPressedEvent) {
                 this.intersectEntities.forEach(function (intersectEntity) {
-                    EventBus.dispatch("bus", new Event.ClickedOnEntityEvent(intersectEntity));
+                    MessageBus.send("bus", new Event.ClickedOnEntityEvent(intersectEntity));
                 }, this);
-            } else if (event instanceof Event.MouseButtonReleasedEvent) {
+            } else if (message instanceof Event.MouseButtonReleasedEvent) {
 
             }
         }
 
-        if (event instanceof Event.SystemEvent) {
-            if (event instanceof Event.SystemUpdateEvent) {
+        if (message instanceof Event.SystemEvent) {
+            if (message instanceof Event.SystemUpdateEvent) {
                 for (let [key, state] of this.keyStates[0].entries()) {
                     if (this.keyStates[1].get(key) != state) {
                         if (state) {
-                            EventBus.dispatch("bus", new Event.KeyDownEvent(null, null, null, null, key));
+                            MessageBus.send("bus", new Event.KeyDownEvent(null, null, null, null, key));
                         } else {
-                            EventBus.dispatch("bus", new Event.KeyUpEvent(null, null, null, null, key));
+                            MessageBus.send("bus", new Event.KeyUpEvent(null, null, null, null, key));
                         }
                     }
                 }
@@ -62,21 +61,21 @@ class Input {
                 for (let [button, state] of this.buttonStates[0].entries()) {
                     if (this.buttonStates[1].get(button) != state) {
                         if (state) {
-                            EventBus.dispatch("bus", new Event.MouseButtonPressedEvent(button));
+                            MessageBus.send("bus", new Event.MouseButtonPressedEvent(button));
                         } else {
-                            EventBus.dispatch("bus", new Event.MouseButtonReleasedEvent(button));
+                            MessageBus.send("bus", new Event.MouseButtonReleasedEvent(button));
                         }
                     }
                 }
                 this.buttonStates[1] = new Map(this.buttonStates[0]);
 
                 if (this.wheelState.x != 0 || this.wheelState.y != 0 || this.wheelState.z != 0) {
-                    EventBus.dispatch("bus", new Event.MouseWheelEvent(this.wheelState));
+                    MessageBus.send("bus", new Event.MouseWheelEvent(this.wheelState));
                     this.wheelState = new Three.Vector3();
                 }
 
                 if (this.mouseState[0].x != this.mouseState[1].x || this.mouseState[0].y != this.mouseState[1].y) {
-                    EventBus.dispatch("bus", new Event.MouseMoveEvent(this.mouseState[0]));
+                    MessageBus.send("bus", new Event.MouseMoveEvent(this.mouseState[0]));
                 }
                 this.mouseState[1] = this.mouseState[0].clone();
             }
@@ -91,7 +90,7 @@ class Input {
         "use strict";
         event.preventDefault();
         this.keyStates[0].set(event.key, true);
-        //EventBus.dispatch("bus", new Event.KeyDownEvent(event.ctrlKey, event.altKey, event.shiftKey, event.metaKey, event.key));
+        //MessageBus.send("bus", new Event.KeyDownEvent(event.ctrlKey, event.altKey, event.shiftKey, event.metaKey, event.key));
     }
 
     /**
@@ -102,7 +101,7 @@ class Input {
         "use strict";
         event.preventDefault();
         this.keyStates[0].set(event.key, false);
-        //EventBus.dispatch("bus", new Event.KeyUpEvent(event.ctrlKey, event.altKey, event.shiftKey, event.metaKey, event.key));
+        //MessageBus.send("bus", new Event.KeyUpEvent(event.ctrlKey, event.altKey, event.shiftKey, event.metaKey, event.key));
     }
 
     /**
@@ -114,7 +113,7 @@ class Input {
         event.preventDefault();
         this.mouseState[0].x = (event.clientX / window.innerWidth) * 2 - 1;
         this.mouseState[0].y = - (event.clientY / window.innerHeight) * 2 + 1;
-        //EventBus.dispatch("bus", new Event.MouseMoveEvent(new Three.Vector2((event.clientX / window.innerWidth) * 2 - 1,- (event.clientY / window.innerHeight) * 2 + 1)))
+        //MessageBus.send("bus", new Event.MouseMoveEvent(new Three.Vector2((event.clientX / window.innerWidth) * 2 - 1,- (event.clientY / window.innerHeight) * 2 + 1)))
     }
 
     /**
@@ -125,7 +124,7 @@ class Input {
         "use strict";
         event.preventDefault();
         this.buttonStates[0].set(event.button, true);
-        //EventBus.dispatch("bus", new Event.MouseButtonPressedEvent(event.button));
+        //MessageBus.send("bus", new Event.MouseButtonPressedEvent(event.button));
     }
 
     /**
@@ -136,7 +135,7 @@ class Input {
         "use strict";
         event.preventDefault();
         this.buttonStates[0].set(event.button, false);
-        //EventBus.dispatch("bus", new Event.MouseButtonReleasedEvent(event.button));
+        //MessageBus.send("bus", new Event.MouseButtonReleasedEvent(event.button));
     }
 
     /**
@@ -149,7 +148,7 @@ class Input {
         this.wheelState.x = event.deltaX;
         this.wheelState.y = event.deltaY;
         this.wheelState.z = event.deltaZ;
-        //EventBus.dispatch("bus", new Event.MouseWheelEvent(new Three.Vector3(event.deltaX, event.deltaY, event.deltaZ)));
+        //MessageBus.send("bus", new Event.MouseWheelEvent(new Three.Vector3(event.deltaX, event.deltaY, event.deltaZ)));
     }
 
     /**
@@ -157,7 +156,7 @@ class Input {
      */
     onWindowResize() {
         "use strict";
-        EventBus.dispatch("bus", new Event.WindowResizeEvent(window.innerWidth, window.innerHeight));
+        MessageBus.send("bus", new Event.WindowResizeEvent(window.innerWidth, window.innerHeight));
     }
 
 }

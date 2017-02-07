@@ -5,7 +5,7 @@ import * as PlayerAction from './PlayerAction.js'
 
 class Player {
     constructor() {
-        this.position = new Three.Vector3();
+        this.position = new Three.Vector3(0, 0, 32);
         this.velocity = new Three.Vector3();
         this.action = PlayerAction.SELECT;
     }
