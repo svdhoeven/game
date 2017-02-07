@@ -1,5 +1,5 @@
 import Tile from '../../gameObjects/Tile';
-import * as THREE from 'three';
+import * as Three from 'three';
 
 class Map {
     constructor(width, height) {
@@ -8,11 +8,18 @@ class Map {
         for (let x = 0; x < width; x++) {
 
             for (let y = 0; y < height; y++) {
-                let mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 0), new THREE.MeshBasicMaterial({color: "green"}));
+                let mesh = new Three.Mesh(new Three.BoxGeometry(1, 1, 0), new Three.MeshBasicMaterial({color: "green"}));
                 mesh.position.set(x, y, 0);
                 this.tiles.push(new Tile(mesh));
             }
         }
+    }
+
+    place(tile, entity) {
+        tile.building = entity;
+        entity.mesh.position.setX(tile.mesh.position.x);
+        entity.mesh.position.setY(tile.mesh.position.y);
+        entity.mesh.position.setZ(tile.mesh.position.z);
     }
 }
 

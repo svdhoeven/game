@@ -36,7 +36,16 @@ class SystemUpdateEvent extends SystemEvent {
     }
 }
 
-export {SystemEvent, SystemStartEvent, SystemStopEvent, SystemRenderEvent, SystemUpdateEvent};
+class SystemStatisticsEvent extends SystemEvent {
+    constructor(periodMs, averageRenderTimeMs, averageUpdateTimeMs) {
+        super();
+        this.periodMs = periodMs;
+        this.averageRenderTimeMs = averageRenderTimeMs;
+        this.averageUpdateTimeMs = averageUpdateTimeMs;
+    }
+}
+
+export {SystemEvent, SystemStartEvent, SystemStopEvent, SystemRenderEvent, SystemUpdateEvent, SystemStatisticsEvent};
 
 /**
  * Game events

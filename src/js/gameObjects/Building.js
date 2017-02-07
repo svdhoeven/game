@@ -1,17 +1,16 @@
 import Entity from './../logic/Entity/Entity.js';
 
-class Tile extends Entity{
+class Building extends Entity{
 
     constructor(mesh){
         super(mesh);
-        this.building = null;
     }
 
     highlight(highlight) {
         if (highlight) {
-            this.mesh.material.color.set('lightgreen');
+            this.mesh.material.color.set('red');
         } else {
-            this.mesh.material.color.set("green");
+            this.mesh.material.color.set('blue');
         }
     }
 
@@ -19,9 +18,9 @@ class Tile extends Entity{
         if (select) {
             this.mesh.material.color.set('red');
         } else {
-            this.mesh.material.color.set('green');
+            this.mesh.material.color.set('blue');
         }
     }
 }
 
-export default Tile;
+export default Building;

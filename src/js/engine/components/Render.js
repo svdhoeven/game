@@ -39,7 +39,7 @@ class Render {
             event.target.entities.forEach(function(entity) {
                 let index = this.entities.indexOf(entity);
                 this.entities.splice(index, 1);
-            });
+            }, this);
             this.scene.remove.apply(this.scene, event.target.entities.map(function(entity) {
                 return entity.mesh;
             }));

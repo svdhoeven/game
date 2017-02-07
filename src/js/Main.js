@@ -32,4 +32,5 @@ function loop(){
 
     engine.update();
     engine.draw();
+    engine.statistics();
 }
