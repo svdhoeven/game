@@ -29,7 +29,7 @@ class Render {
         if (event.target instanceof Event.SystemRenderEvent) {
             this.renderer.render(this.scene, this.camera);
         } else if (event.target instanceof Event.WindowResizeEvent) {
-            this.resize(event.width, event.height);
+            this.resize(event.target.width, event.target.height);
         } else if (event.target instanceof Event.AddSceneEvent) {
             this.entities.push.apply(this.entities, event.target.entities);
             this.scene.add.apply(this.scene, event.target.entities.map(function(entity) {
