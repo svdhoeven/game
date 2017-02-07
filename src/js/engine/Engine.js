@@ -16,6 +16,8 @@ class Engine {
         this.input = new Input();
         this.render = new Render();
 
+        this.ignoreEvents = [Event.SystemEvent, Event.CameraEvent];
+
         EventBus.addEventListener("bus", this.input.onEvent, this.input);
         EventBus.addEventListener("bus", this.render.onEvent, this.render);
 
@@ -37,11 +39,22 @@ class Engine {
     }
 
     draw() {
+        let now = Date.now();
         EventBus.dispatch("bus", new Event.SystemRenderEvent());
+        this.lastRenderTs = now;
     }
 
     log(event) {
-        console.debug("Event Timestamp: " + Date.now() + ",  Name: " + event.target.constructor.name);
+        let log = true;
+        this.ignoreEvents.forEach(function(type) {
+            if (event.target instanceof type) {
+                log = false;
+            }
+        }, this);
+
+        if (log) {
+            console.debug("Name: " + event.target.constructor.name + ", Event: " + JSON.stringify(event.target));
+        }
     }
 
 }

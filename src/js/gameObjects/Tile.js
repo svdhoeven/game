@@ -1,17 +1,25 @@
-import GameObject from './../coreObjects/GameObject';
+import Entity from './../logic/Entity/Entity.js';
 
-class Tile extends GameObject{
+class Tile extends Entity{
 
-    constructor(geometry){
-        super(geometry);
+    constructor(mesh){
+        super(mesh);
     }
 
-    onMouseHoverStart() {
-        console.log("Starting hovering over tile");
+    highlight(highlight) {
+        if (highlight) {
+            this.mesh.material.color.set('lightgreen');
+        } else {
+            this.mesh.material.color.set("green");
+        }
     }
 
-    onMouseHoverEnd() {
-        console.log("Stopped hovering over tile");
+    select(select) {
+        if (select) {
+            this.mesh.material.color.set('red');
+        } else {
+            this.mesh.material.color.set('green');
+        }
     }
 }
 

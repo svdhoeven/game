@@ -1,25 +1,15 @@
 import EventBus from 'eventbusjs';
-import GUI from 'dat.gui';
 
-import * as Event from '../events/Event.js'
+import GameLogic from './Game/GameLogic.js';
+import PlayerLogic from './Player/PlayerLogic.js';
 
 class Logic {
     constructor() {
-        EventBus.addEventListener("bus", this.onEvent, this);
-    }
+        this.gameLogic = new GameLogic();
+        this.playerLogic = new PlayerLogic();
 
-    onEvent(event) {
-        if (event instanceof Event.SystemStartEvent) {
-            let gui = new GUI();
-            let options = function() {
-                this.new = function() {};
-                this.continue = function() {};
-                this.quit = function() {};
-            }
-            gui.add(options, 'new');
-            gui.add(options, 'continue');
-            gui.add(options, 'quit');
-        }
+        EventBus.addEventListener("bus", this.gameLogic.onEvent, this.gameLogic);
+        EventBus.addEventListener("bus", this.playerLogic.onEvent, this.playerLogic);
     }
 }
 
